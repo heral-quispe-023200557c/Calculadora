@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Multi-Base 8086</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --input-bg: #0b1120;
+            --border: #334155;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .calculator {
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 550px;
+            border: 1px solid var(--border);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin: 6px 0 0;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .status-banner {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: none;
+            line-height: 1.4;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        input[type="number"], input[type="text"] {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            color: var(--success);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .operations {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        button {
+            background-color: var(--card-bg);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 14px 0;
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background-color: var(--accent);
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .result-row {
+            display: flex;
+            align-items: center;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .result-label {
+            background-color: var(--border);
+            padding: 12px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            width: 55px;
+            text-align: center;
+        }
+
+        .result-row input[type="text"] {
+            background-color: transparent;
+            border: none;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="header">
+            <h1>Calculadora Multi-Base 8086</h1>
+            <p>Conexión directa con emu8086 (Decimal, Hexadecimal, Binario)</p>
+        </div>
+
+        <div id="status-banner" class="status-banner">
+            ⚡ Código generado en emu8086.<br>
+            Presione <b>Emulate (F5)</b> ➔ <b>Run (F9)</b> y responda <b>S</b> o <b>N</b> en la consola.
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="num1">Primer Operando</label>
+                <input type="number" id="num1" step="any" placeholder="123">
+            </div>
+            <div class="input-group">
+                <label for="num2">Segundo Operando</label>
+                <input type="number" id="num2" step="any" placeholder="-123">
+            </div>
+        </div>
+
+        <div class="operations">
+            <button class="btn-op" onclick="calcular('suma')" title="Sumar">+</button>
+            <button class="btn-op" onclick="calcular('resta')" title="Restar">-</button>
+            <button class="btn-op" onclick="calcular('multiplicacion')" title="Multiplicar">×</button>
+            <button class="btn-op" onclick="calcular('division')" title="Dividir">÷</button>
+        </div>
+
+        <div class="results-section">
+            <div class="result-row">
+                <div class="result-label">DEC</div>
+                <input type="text" id="res-dec" readonly placeholder="0">
+            </div>
+            <div class="result-row">
+                <div class="result-label">HEX</div>
+                <input type="text" id="res-hex" readonly placeholder="0">
+            </div>
+            <div class="result-row">
+                <div class="result-label">BIN</div>
+                <input type="text" id="res-bin" readonly placeholder="0">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function calcular(operacion) {
+            const num1Input = document.getElementById('num1').value;
+            const num2Input = document.getElementById('num2').value;
+            const banner = document.getElementById('status-banner');
+            const botones = document.querySelectorAll('.btn-op');
+
+            if (num1Input === "" || num2Input === "") {
+                alert("Por favor, ingrese ambos operandos.");
+                return;
+            }
+
+            banner.style.display = 'block';
+            botones.forEach(b => b.disabled = true);
+
+            try {
+                const response = await fetch('/calcular', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        num1: parseFloat(num1Input), 
+                        num2: parseFloat(num2Input), 
+                        operacion: operacion 
+                    })
+                });
+
+                const data = await response.json();
+                const inputsResultado = document.querySelectorAll('.result-row input');
+
+                if (data.status === 'ok') {
+                    document.getElementById('res-dec').value = data.dec;
+                    document.getElementById('res-hex').value = "" + data.hex;
+                    document.getElementById('res-bin').value = "" + data.bin;
+                    inputsResultado.forEach(el => el.style.color = '#10b981');
+                } else if (data.status === 'no_enviado') {
+                    limpiarResultados();
+                    alert("⚠️ " + data.message);
+                } else if (data.status === 'error_ensamblador') {
+                    limpiarResultados();
+                    alert("❌ " + data.message);
+                } else if (data.status === 'error_matematico') {
+                    limpiarResultados();
+                    alert("⛔ " + data.message);
+                }
+            } catch (error) {
+                limpiarResultados();
+                alert("❌ Error de comunicación con el servidor Flask.");
+            } finally {
+                banner.style.display = 'none';
+                botones.forEach(b => b.disabled = false);
+            }
+        }
+
+        function limpiarResultados() {
+            document.getElementById('res-dec').value = "---";
+            document.getElementById('res-hex').value = "---";
+            document.getElementById('res-bin').value = "---";
+            document.querySelectorAll('.result-row input').forEach(el => el.style.color = '#ef4444');
+        }
+    </script>
+
+</body>
+</html>
